@@ -1,0 +1,39 @@
+name: Docker Image Scan with Trivy
+
+on:
+  push:
+    branches:
+      - main  # Adjust if needed
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        load: true  # Required so Trivy can scan locally
+        tags: tezatanajiwilmar/fastapi-app:latest
+
+    - name: Run Trivy vulnerability scan
+      uses: aquasecurity/trivy-action@v0.12.0
+      with:
+        image-ref: tezatanajiwilmar/fastapi-app:latest
+        format: table
+        exit-code: 1
+        ignore-unfixed: true
+        severity: CRITICAL,HIGH
