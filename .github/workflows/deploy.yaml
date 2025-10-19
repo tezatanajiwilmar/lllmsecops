@@ -1,0 +1,9 @@
+- name: Decode kubeconfig and configure kubectl
+  run: |
+    echo "${{ secrets.KUBECONFIG_B64 }}" | base64 --decode > kubeconfig
+    export KUBECONFIG=$PWD/kubeconfig
+
+- name: Apply deployment
+  run: |
+    kubectl apply -f k8s/deployment.yaml
+    kubectl apply -f k8s/service.yaml
