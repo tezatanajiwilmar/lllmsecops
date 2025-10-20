@@ -22,7 +22,7 @@ jobs:
           sudo apt-get clean
 
           # Remove Android SDK
-          rm -rf "$ANDROID_HOME"
+          sudo rm -rf "$ANDROID_HOME"
 
           echo "Disk usage after cleanup:"
           df -h
